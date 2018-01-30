@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>回到顶部测试</title>
+	<link href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.css" type="text/css" rel="stylesheet"></link>
+	<style>
+		body{height:5000px;background-color:#343d3e;}
+		.top{background-color: lightblue;font-size:20px;}
+		.back-to-top{width:50px;height:30px;font-size:20px;padding-left:5px;background:#de341a;display:none;position:fixed;bottom:10px;right:15px;}
+	</style>
+	<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+</head>
+<body>
+	<div class="top">我是顶部</div>
+	<div class="back-to-top"><span class="glyphicon glyphicon-eject">顶部</span></div>
+</body>
+<script>
+	$(window).scroll(function(){
+		var offset = 480;
+		var duration = 300;
+		var scrollTop = $(this).scrollTop();
+		if(scrollTop > offset) {
+			$('.back-to-top').fadeIn(duration);
+			// $('.back-to-top').show();
+		}  else {
+			$('.back-to-top').fadeOut(duration);
+			// $('.back-to-top').hide();
+		}
+	})
+	$(function(){
+		$(".back-to-top").click(function(){
+			duration = 500;
+			$('html, body').animate({scrollTop: 0}, duration);
+          	return false;
+		})
+	})
+</script>
+</html>
