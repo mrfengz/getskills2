@@ -24,15 +24,18 @@
 	$(function(){
 		// 图片对象
 		var lazyImgs = $("img[data-src]");
+		console.log(lazyImgs);
 		var offset = $(window).height(); //可视窗口高度
 		function winScroll() {
+			console.log(lazyImgs.length);
+			var imgIdx = []; //已经替换了url的img对象，可以从lazyImgs中删除
 			if(lazyImgs.length > 0) {
-				var imgIdx = [];
 				var scrollTop = $(this).scrollTop(); //滚动条位置
-				lazyImgs.each(function(i){
+				$.each(lazyImgs,function(i){
 					if($(this).data('src') != $(this).attr('src')) {
 						if($(this).offset().top - offset < scrollTop) { //判断高度 图片距离顶部高度 - 视窗高度 < 滚动条高度
 							$(this).attr('src', $(this).data('src'));
+							imgIdx.push(i);
 						}
 					}
 				})
