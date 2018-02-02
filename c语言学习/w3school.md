@@ -296,10 +296,197 @@
 					...
 					number definition;
 				} [one or more structure variables]
+				示例：书的结构
+				struct Books 
+				{
+					char title[50];
+					char author[50];
+					char subject[100];
+					int book_id;
+				} book; [不能少，否则报错]
+			访问结构成员
+				访问运算符 .
+				Book1.title
 
-
-
-
-
-
+				int main() {
+					struct Books Book1;
+					struct Books Book2;
 		
+				  	//Book1详情
+			        strcpy(Book1.title, "C Programing");
+			        strcpy(Book1.author, "Nuha Ali");
+			        strcpy(Book1.subject, "C Programing Tutorial");
+			        Book1.book_id = 6495700;
+			 
+			        // Book2详情
+			        strcpy(Book2.title, "Telecom Biling");
+			        strcpy(Book2.author, "Zara Ali");
+			        strcpy(Book2.subject, "Telecom Billing Turtorial");
+			        Book2.book_id = 5487658;
+				}
+			
+			指向结构的指针
+				// 声明
+				struct Books *struct_pointer; 
+				// 初始化
+				struct_pointer = &Book1;
+				使用指向该结构的指针访问结构的成员
+				struct_point->title;
+
+			位域
+				有些信息在存储时，不需要占用一个完整的字符，如0 1 开关
+				把一个字节中的二进位划分为几个不同的区域，并说明每个区域的位数
+				每个域有一个域名，允许在程序中按域名进行操作。这样就可以把几个不同的对象用一个字节的二进制为域来表示
+
+				位域的定义
+					struct 位域结构名
+					{
+						位域列表 --> 类型说明符 位域名:位域长度
+					}
+					struct bs {
+						int a:8;
+						int b:2;
+						int c:6;
+					} data;
+					上面的意思是： data为bs变量，共占2个字节。位域a占8位...
+
+				说明：
+					1)一个位域必须存储在同一个字节中，不能跨两个字节。如果一个字节中剩余空间不够存放另一个位域，应该从下一个单元起存放该位域。
+					struct bs{
+						unsigned int a: 4;
+						unsigned :4;	// 空域，无法使用，占位
+						unsigned int b:4;
+					}
+					2)位域可以是无名位域，这时它只用来作填充或者调整位置，不能使用。
+					3)位域不允许跨两个字节，因此其长度不能大于一个字节的长度。如果超过，有些编译器可能允许内存重叠，另外一些可能把剩余的部分存储在下一个字节中
+
+				位域的使用
+					位域变量名.位域名
+					位域也可以使用指针
+					示例看脚本 bit_struct.c
+
+		C共用体
+			共用体是一种特殊的数据类型，运行你在相同的内存位置存储不同类型的数据。
+			你可以定义一个带有多成员的共同体，但是任何时候只能有一个成员带有值。
+
+			定义：
+				union [union tag] {
+					member definition;
+					member definition;
+					...
+					member definition;
+				}[one or more union variables];
+
+				union Data {
+					int i;
+					float f;
+					char str[20];
+				} data;
+				Data类型变量可以存储一个整数，一个浮点数或者一个字符串。其占用内存应足够存储共用体中最大的成员
+
+			访问共同体成员
+				Data.i Data.f
+				示例见union.c
+
+		C位域
+			struct {
+				unsigned int widthValidated;
+				unsigned int heightValidated;
+			} status;
+			sizeof(status) // 8
+
+			struct {
+				unsigned int widthValidated: 1;
+				unsigned int heightValidated: 1;
+			} status2;
+			sizeof(status2) // 4,如果超过33位，将会占用8个字节
+
+			位域声明
+				struct 
+				{
+					type [member_name] : width;
+				};
+				type:整数类型，决定了如何解释位域的值，可以使整型，无符号或有符号整型
+				member_name: 位域的名称
+				width: 位域 位的数量。宽度必须小于或等于指定类型的位宽度
+
+				struct 
+				{
+					unsigned int age:3
+				} Age;
+
+		C typedef 
+			为【类型】取一个新的名字
+			typedef unsigned char BYTE; //为unsigned char起一个别名BYTE
+			// 示例
+			typedef struct Books{
+				char title[50];
+			} Book;
+			int main() {
+				Book book;
+
+				return 0;
+			}
+
+			typedef vs #define
+			#define是C指令，用于为各种数据类型定义别名，与typedef类似。
+				1）typedef仅限于为类型定义符号名称，#define不仅可以为类型定义别名，也能为数值定义别名，比如你可以定义1为 one
+				2）typedef是由编译器执行解释的，#define语句是由预编译器进行处理的
+			//示例
+			#include <stdio.h>
+			#define TRUE 1
+			#define FALSE 0
+
+			int main() {
+				printf("value of TRUE: %d\n", TRUE); //1
+				printf("value of FALSE: %d\n", FALSE); //0
+				return 0;
+			}
+
+##### C输入与输出
+	输入，表示向程序填充一些数据。输入可以是以文件的形式或从命令行中进行
+	输出，意味着要在屏幕、打印机或者文件中显示一些数据
+
+	C语言把所有设备都当做文件，设备被处理的方式与文件相同。以下三个文件会在程序执行时自动打开，以便访问键盘和屏幕
+	标准文件		文件指针		设备
+	标准输入		stdin		键盘
+	标准输出		stdout		屏幕
+	标准错误		stderr		你的屏幕
+
+	getchar() & putchar() 函数
+		int getchar(void) 可以从屏幕读取一个可用字符，并把它返回为一个整数。
+		int putchar(int c) 把字符输出到屏幕上
+		示例见 get_put_char.c
+
+	gets() & puts() 函数
+		char gets(char s)函数从stdin读取一行到s所指向的缓冲区，直到一个终止符或者EOF
+		*int puts(const char s)函数把字符串s和一个尾随的换行符写到stdout
+		示例见 gets_puts_func.c
+
+	scanf() & printf()函数
+		*int scanf(const char format,...) 函数从标准输入流stdin读取输入，并根据提供的format来浏览输入
+			遇到一个空格就会中止 hello world会被当做两个输入
+		*int printf(const char format,...) 函数把输出写入到标准输出流stdout，并根据提供的格式产生输出
+		示例见scanf_printf_func.c
+
+##### C文件读写
+	打开文件
+		fopen()
+		模式 r 	w	a 	r+ 	w+ 	a+ 	
+		二进制 rb wb	ab	rb+ r+b wb+ w+b ab+ a+b
+	关闭文件
+		fclose()  // return 0;关闭成功  EOF 关闭失败
+		会清空缓冲区中数据，关闭文件，用于释放该文件的所有内存。
+	写入文件
+		fputc(int c, FILE *fp) //写入成功， 返回写入的字符，发生错误，返回EOF
+		fputs(const char *s,FILE *fp) //写入字符串。写入成功，返回一个非负值，否则返回EOF
+		fprintf(fp, str)
+		示例见 write_file.c 
+	读取文件
+		fgetc() //返回值时读取的字符，如果发生错误则返回EOF
+		fgets(*buf, int n , FILE *fp) //从fp所指向的输入流中读取n-1个字符，把读取到的字符串复制到缓冲区，并在最后追加一个null来终止字符串
+
+
+
+
+
