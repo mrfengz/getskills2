@@ -483,9 +483,382 @@
 		fprintf(fp, str)
 		示例见 write_file.c 
 	读取文件
-		fgetc() //返回值时读取的字符，如果发生错误则返回EOF
-		fgets(*buf, int n , FILE *fp) //从fp所指向的输入流中读取n-1个字符，把读取到的字符串复制到缓冲区，并在最后追加一个null来终止字符串
+		1）fgetc() //返回值时读取的字符，如果发生错误则返回EOF
+		2）fgets(*buf, int n , FILE *fp) //从fp所指向的输入流中读取n-1个字符，把读取到的字符串复制到缓冲区，并在最后追加一个null来终止字符串
+		3）int fscanf(File fp,const char format,...); //从文件中读取字符串，但是在遇到第一个空格字符时，它会停止读取
+			//-------------read_file.c
+				#include <stdio.h>
+				
+				main()
+				{
+				    FILE *fp;
+				    char buff[255];
 
+					fp = fopen("tmp.txt", "r");
+				 	fscanf(fp,"%s",buff);
+					printf("1:%s\n", buff); // 1:This
+				
+				    fgets(buff, 255,(FILE*)fp); 
+				    printf("2:%s\n", buff); // fp接着上一部分往下走，取决于先读到行尾还是255个字符 2: is testing for fprintf ...
+				 
+				    fgets(buff, 255,(FILE*)fp);
+				    printf("3:%s\n", buff); //3:This is testing for puts ...
+				    fclose(fp);
+				}
+			//-------------------
+	二进制I/O函数		
+		size_t fread(void *ptr, size_t size_of_elements, size_t number_of_elements, FILE *a_file)
+		size_t fwrite(const void *ptr, size_t size_of_elements, size_t number_of_elements, FILE *a_file)
+			
+##### C预处理器
+	C预处理器不是编译器的组成部分，但它是编译过程中一个单独的步骤。
+	预处理器只是一个文本替换工具而已，他们会指示编译器在实际编译之前完成所需的预处理。
+	C预处理器(C Preprocessor) 简写为CPP.
+
+	所有预处理器命令都以井号(#)开头，第一个字符必须非空。
+	#define 	定义宏
+	#include 	包含一个源代码文件
+	#undef 		取消已定义的宏
+	...	
+
+	#define MAX_ARRAY_LENGTH 20
+
+	#include <stdio.h>  //从系统库中获取stdio.h,并添加到当前的源文件中
+	#include "myheader.h" //告诉CPP
+
+	#undef FILE_SIZE   		//取消一定的FILE_SIZE，并定义为42
+	#define FILE_SIZE 42
+
+	#ifndef MESSAGE			//只有当MESSAGE未定义时，才定义MESSAGE
+		#define MESSAGE "You wish!"
+	#endif
+
+	#ifdef DEBUG 		//如果定义了DEBUG，则执行处理语句
+		/* 处理语句 */
+	#endif
+
+	预定义宏
+		__DATE__ 	当前日期 MMM DD YYYY 格式的字符常量 		//FILE: define_hong.c
+		__TIME__ 	当前时间，一个以 HH:MM:SS 格式表示的字符常量	//Date: Feb  5 2018
+		__FILE__	这回包含当前文件名，一个字符串常量			//Time: 10:16:56
+		__LINE__ 	这回包含当前行号，一个十进制常量				//Line: 8
+		__STDC__ 	当编译器以ANSI标准编译时，则定义为1			//ANSI: 1
+		示例源文件： define_hong.c
+
+	预处理器运算符
+		1)宏延续运算符 \  多行时，用这个表示是多行的
+			#define message_for(a, b) \
+				printf(#a " and " #b ": We love you!\n");
+		2) 字符串常量化运算符 #
+			在宏定义中，当需要把一个宏的参数转化为字符串常量时，使用字符串常量化运算符(#).在宏中使用的该运算符有一个特定的参数或者参数列表
+			示例源文件：cpp_1.c 
+				int main() {
+					message_for(Carole, Debra); // Carole and Debra: we love you!
+					return 0; 
+				}
+		3) 标记粘贴运算符(##)
+			宏定义内的标记粘贴运算符会合并两个参数，它允许在宏定义中两个独立的标记被合并成为y一个标记。
+			示例见源文件 define_and.c 
+				// 字符串常量运算符(#)和编辑粘贴运算符(##)
+				#define tokenpaster(n) printf("token" #n " = %d", token##n);
+
+				int main()
+				{
+					int token34 = 40;
+					tokenpaster(34); //token34 = 40
+					return 0;
+				}
+		4) defined()运算符
+			检测一个常量是否已经被定义过 
+			#include <stdio.h>
+			#if !defined(MESSAGE)
+				#define MESSAGE "You wish!";
+			#endif
+
+			int main() 
+			{
+				printf("Here is the message: %s\n", MESSAGE); //Here is the message: You wish!
+				return 0;
+			}
+			
+		5) 参数化的宏
+			可以使用参数化的宏来模拟函数
+			int square(int x) {
+				return x * x;
+			} 
+			====>>>
+			#define square(x) ((x) * (x))
+
+			示例源文件见define_like_func.c
+			#define MAX(x,y) ((x) > (y) ? (x) : (y))
+
+			printf("%d\n", MAX(10,20));
+##### C头文件
+	头文件是扩展名为.h的文件，包含了函数声明和宏定义，被多个源文件引用共享。
+	有两种类型：编译器自带的头文件和程序员编写的头文件
+
+	引入：#include
+	引入后相当于复制头文件中的内容。
+	#include <stdio.h>  	//引入系统头文件
+	#include "myfile.h"		//引入自定义的头文件
+
+	只引用一次头文件
+		// 包装器 #ifndef
+		#ifndef HEADER_FILE //检查是否已定义该常量，再次引入时，条件为假，不在执行
+		#define HEADER_FILE
+			the entire header file 
+		#endif
+	有条件引用
+		#if SYSTEM_1
+			#include "system_1.h"
+		#elif SYSTEM_2
+			#include "system_2.h"
+		#elif SYSTEM_3
+			#include "system_3.h"
+			...
+		#endif
+
+		文件比较多时，这么做是很不妥当的。可以先定义头文件为宏(常量)，然后再引入
+		#define SYSTEM_H "system_1.h"
+		...
+		#include SYSTEM_H
+
+##### C类型强制转换
+	(type_name) expression
+	示例：
+		main() {
+			int sum = 16,count = 3;
+			double mean;
+
+			mean = (dobule) sum/count; //强制类型转换运算符优先级大于除法，先将16转化为double类型
+			printf("Value of mean: %f\n", mean);
+		}
+
+	整数提升
+		整数提升是把小于int或unsigned int的证书类型转换为 int 或者 unsigned int的过程
+		示例见 int_raise.h 源文件
+			#include <stdio.h>
+			main()
+			{
+			    int i = 17;
+			    char c = 'c'; // ascii 的值时 99
+			    int sum;
+			    sum = i + c; // c的值被转化为了ascii值
+			    printf("value of sum : %d\n", sum); // value of sum : 116
+			}
+	常用的算术转换
+		常用的算术转换是隐式地把值转换为相同的类型。编译器首先执行整数提升，如果操作数类型不同，则它们会被转换为下列层次中出现的最高层次类型
+		int --> unsigned int --> long->unsigned long 
+			--> long long -> unsigned long long-> float -> double ->long dobule
+		常用的算术转换不适用于赋值运算符、逻辑运算符&& 和 ||
+		示例
+			main() {
+				int i = 17;
+				char c = 'c';
+				float sum;
+
+				sum = i + c;	//先将c转换为整数，然后再把c和i转为浮点型，相加得到一个浮点数
+				printf("value of sum:%f\n", sum); // 116.000000
+			}
+
+##### C错误处理
+	C语言不提供对错误处理的直接支持，但是作为一种系统编程语言，它以返回值的形式允许您访问底层数据。
+	在发生错误时，大多数的C或UNIX返回1 或 NULL,同时会设置一个错误代码errno,该错误代码是全局变量，表示在函数调用期发生了错误。你可以在<error.h>头文件中找到各种各样的错误代码
+
+	C程序员可以通过检查返回值，然后根据返回值决定采用哪种适当的动作。程序员应该在初始化时，把errno设置为0，表示没有错误。
+
+	1) errno,perror()和strerror()
+		perror() 	函数显示您传给他的字符串，后跟一个冒号，一个空格和当前errno的值的文本形式
+		strerror() 	返回一个指针，指向当前errno值的文本表示形式
+		示例源代码 error.c 
+		#include <stdio.h>
+		#include <errno.h>
+		#include <string.h>
+
+		extern int errno;
+
+		int main()
+		{
+		    FILE *fp;
+		    int errnum;
+		    fp = fopen("unexists.txt", "rb");
+		    if(fp == NULL) {
+		        errnum = errno;
+		        // fprintf() 使用stderr错误流来输出错误消息
+		        fprintf(stderr, "value of errno: %d\n", errno); //错误码  value of errno: 2
+		        perror("Error printed by perror()\n");			
+		        /*
+				在这个字符串后面跟上： 错误提示 
+				Error printed by perror()
+				: No such file or directory
+		        */
+		        fprintf(stderr, "Error opening file : %s\n",strerror(errnum)); 
+		        // Error opening file : No such file or directory
+		    } else {
+		        fclose(fp);
+		    }
+		    return 0;
+		}
+	2） 在进行除法运算时，要检查除数是否为0
+	3) 程序退出状态
+		通常情况下，程序成功执行完一个操作，正常退出的时候会带有值EXIT_SUCCESS。在这里，EXIT_SUCCESS是宏，它被定义为0
+		如果程序有错误，当你退出程序时，会带有状态值，EXIT_FAILURE,被定义为-1
+		示例源文件 program_exit_status.c
+
+##### C递归
+	递归是以自相似的方式重复项目的处理过程。在函数内部调用函数自身，成为递归调用
+		void recursion()
+		{
+			recursion(); //函数调用自身
+		}
+		int main()
+		{
+			recursion();
+		}
+	注意要定义一个从函数退出的条件，否则会进入无限循环
+
+
+	示例：数的阶乘   源文件 factorial.c
+		#include <stdio.h>
+		//阶乘
+
+		int factorial(unsigned int i) {
+		    if(i <=1){
+		        return 1;
+		    }
+		    return i*factorial(i - 1);
+		}
+
+		int main()
+		{
+		    int i = 5;
+		    printf("Factorial of %d is %d", i, factorial(i));
+		    return 0;
+		}
+
+	示例2： 斐波那契数列    示例源文件fibonaci.c
+ 		#include <stdio.h>
+		//斐波那契数列
+		int fibonaci(int i)
+		{
+		    if(i == 0) {
+		        return 0;
+		    }
+		    if(i == 1) {
+		        return 1;
+		    }
+		    return fibonaci(i-1) + fibonaci(i - 2);
+		}
+
+		int main()
+		{
+		    int i;
+		    for(i = 0; i < 10 ; i++) {
+		        printf("%d \t", fibonaci(i));
+		    }
+		    return 0;
+		}
+
+##### 可变参数
+	有时候你可能会希望函数带有可变数量的参数，而不是预定义数量的参数。C语言提供的解决方案
+		int func(int, ...) //int表示参数的总个数，最后一个参数写成 ...
+		{
+			...
+		}
+		int main() 
+		{
+			func(1,2,3);
+			func(1,2,3,4);
+		}
+
+	定义可变数量参数函数步骤：
+		1）定义一个函数，最后一个参数为省略号，省略号前面那个实数总是int,表示参数的个数
+		2）在函数中定义一个va_list类型变量，该类型是在 stdarg.h头文件中定义的
+		3）使用int参数和va_start宏来初始化va_list变量为一个参数列表。宏va_start是在stdarg.h头文件中定义的
+		4）使用va_arg宏和va_list变量来访问参数列表中的每个项
+		5）使用宏va_end来清理赋予va_list变量的内存
+
+		可查看changable_args.c源文件，具体代码如下：
+		#include <stdio.h>
+		#include <stdarg.h>
+
+		dobule average(int num, ...) {
+			va_list valist;
+			double sum = 0.0;
+			int i;
+
+			//为num个参数初始化
+			va_start(valist, num);
+			//访问所有赋给valist的参数
+			for(i=0; i < num; i++){
+				sum += va_arg(valist, int);
+			}
+			//清理为valist保留的内容
+			va_end(valist);
+			return sum/num;
+		}
+
+		main() {
+			printf("Average of 2,3,4,5 = %d \s",average(4,2,3,4,5)); // Average of 2,3,4,5 = 3.500000
+			printf("Average of 5,10,15 = %d \s",average(3,5,10,15)); // Average of 2,3,4,5 = 10.000000
+		}
+	
+##### C内存管理
+	C语言为内存的分配和管理提供了几个函数。可以在stdlib.h头文件中找到
+		函数									描述
+		calloc(int num,int size)			分配一个带有num个元素的数组，每个元素大小为size的字节
+		free(void address)					释放address所指向的内存块
+		malloc(int num)						分配一个num字节的数组，并把他们初始化
+		realloc(void *address, int newsize)	重新分配内存，把内存扩展到newsize
+	
+	动态分配内存
+		如果预先知道数组的大小，那么定义数组时就比较容易。如存储人名的数组，最多容纳100个字符
+		char name[100];
+
+		如果事先不知道要存储的文本长度，就需要动态分配内存了。先定义一个指针，然后指向未定义所需内存大小的字符，后续再根据需求来分分配内存。
+		char *description;
+		//动态分配内存
+		description = malloc(200 * sizeof(char));
+		// description = calloc(200, sizeof(char)); //方式二
+		if(description == NULL) {
+			fprintf(stderr,"error - unable to allocate required memory \n");
+		} else {
+			strcpy(description, "Zark , the blood master killed your m, you need to destory him!");
+		}
+
+	重新调整内存大小和释放内存
+		当程序退出时，操作系统会自动释放所有分配给程序的内存。但是，在你不需要内存时，建议都通过free()函数来释放内存
+		或者，你也可以通过调用函数realloc()来增加或减少已分配的内存块的大小。
+		示例源代码 realloc_free_memory.c
+
+##### C命令行参数
+	执行程序时，可以从命令行传值给C程序。这些值成为命令行参数，他们对程序很重要，特别是当你想从外部控制程序，而不是在代码中对这些值进行硬编码时。
+
+	命令行参数是使用main()函数参数来处理的，其中argc是指传入参数的个数，argv[]是一个指针数组，指向传递给程序的每个参数
+	// 该脚本希望有一个参数 argc最少有一个参数，argv[0]是脚本的名字
+	// 多个参数之间用空格分开 如果参数本身就有空格，需要用"" 或者 ''括起来
+	#include <stdio.h>
+	int main(int argc, char *argv[])
+	{
+	    if(argc == 2){
+	        printf("The argument supplied is %s\n", argv[1]);
+	    } else if(argc > 2) {
+	        printf("Too many arguments supplied.\n");
+	    } else {
+	        printf("One arguments expected.\n");
+	    }
+	}
+
+		
+
+
+
+
+
+
+			
+
+	
 
 
 
