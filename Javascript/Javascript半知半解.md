@@ -333,3 +333,82 @@ Javascript
 			3 function.prototype.bind() 
 				用于将函数体内的this绑定到某个对象，然后再返回一个新函数
 				bind(obj)
+
+		原型
+			----------------------
+			每一个对象(除null之外)，都和另一个对象关联，也可以说成是继承自另一个对象。
+			这个另一个对象就是我们熟知的 原型(prototype)
+
+			通过关键字new和构造函数调用创建的对象的原型就是构造函数的prototype属性的值。
+			比如通过new Object()创建的对象继承自Object.prototype；new Array()创建的对象继承自Array.prototype；
+
+			所有的内置构造函数，都具有一个继承自Object.prototype的原型
+
+			------ 原型链 ------
+			对象的属性和方法，可能定义在自身，也有可能是定义在它的原型对象。由于原型对象本身也是对象，也有自己的原型，所以形成了一条原型链(prototype  chain)。
+			如果一层层地向上追溯，那么所有对象的原型最终都可以上溯到Object.prototype，即Object构造函数的prototype属性指向的那个对象。
+			Object.prototype对象有无原型呢？ 它也有，不过这个原型是没有任何属性和方法的null对象，而null没有自己的原型
+
+			原型链的作用：
+				当读取某个对象的属性时，JavaScript引擎先寻找对象本身的属性，如果找不到，就去原型找。如果到最顶层的Object.prototype还是找不到，就返回undefined
+
+			继承
+				如果查询对象一个不存在属性时，会返回undefined
+				如果对象自身和它的原型都定义了同一个属性，那么优先读取自身的属性。这叫做”覆盖(overriding)“
+
+			constructor属性
+				prototype对象与一个constructor属性，默认指向prototype对象所在的构造函数
+
+			操作符
+				function Car(){
+					this.color = "red"
+				}
+				1 instanceof 运算符
+					var c = new Car();
+					c instanceof Car; //true
+
+				2 Object.getPrototypeOf(newObj) //返回一个实例化对象的原型
+					Object.getPrototypeOf(c); //{constructor:ƒ Car(), __proto__:Object}
+					Object.getPrototypeOf(c) === Car.prototype; // true
+				
+				3 Object.setPrototypeOf(obj, prototype) 可以为现有对象设置原型，返回一个新对象
+
+				4 Object.create() 用于从原型对象生成新的实例对象，可以替代new命令
+					它接受一个对象作为参数，返回一个新对象，后者完全继承前者的属性
+					Rectangle.prototype = Object.create(Shape.prototype)
+
+				5 Object.prototype.isPrototypeOf(实例化对象)
+					对象实例的isPrototypeOf方法，用来判断一个对象是否是另一个对象的原型
+					Object.prototype.isPrototypeOf({}); // true
+
+				6 Object.prototype.proto 
+					__proto__属性可以修改某个对象的原型对象
+
+				7 Object.getOwnPropertyNames(实例化对象) 
+					返回一个数组，成员是对象本身的所有属性的键名，不包含继承的属性键名
+					Object.getOwnPropertyNames(rect) // ["x", "y"]
+
+				8 Object.prototype.hasOwnProperty(prop) 
+					返回某个对象是否有一个非继承的自有属性  rect.hasOwnProperty("x"); //
+			// Shape - 父类(superclass)
+			function Shape() {
+				this.x = 0;
+				this.y = 0;
+			}
+
+			// 父类的方法
+			Shape.prototype.move = function(x, y){
+				this.x += x;
+				this.y += y;
+				console.info("Rect moves");
+			}
+
+			// 子类 (subclass)
+			function Rectangle(){
+				Shape.call(this); //调用父类的构造方法
+			}
+
+			// 子类继承父类
+			Rectangle.prototype = Object.create(Shape.prototype); //原型中的构造方法完全继承自父类
+			Rectangle.prototype.constructor = Rectangle; //修改构造方法为Rectangle
+			
