@@ -411,4 +411,54 @@ Javascript
 			// 子类继承父类
 			Rectangle.prototype = Object.create(Shape.prototype); //原型中的构造方法完全继承自父类
 			Rectangle.prototype.constructor = Rectangle; //修改构造方法为Rectangle
-			
+#### 数组
+	var arr = [1, 'a', {name: 'lily'}, function(){}];
+
+	数组清空的一个有效方法 
+		var arr = [1,34];
+		arr.length = 0; // []
+
+	数组元素的添加和删除
+		arr.push();  //从末尾添加一个元素或多个元素
+		arr.shift()  //删除数组中的第一个元素
+
+	遍历数组
+		1 for 
+			for(var i=0; i<arr.length; i++){
+				console.log(arr[i]);
+			}
+
+		2 while
+			var i = 0;
+			while(i<arr.length){
+				console.log(i);
+				i++;
+			}
+
+		3 for .. in 
+			for(var i in a) {
+				console.log(a[i])
+			}
+
+		4 forEach
+			a.forEach(function(v){
+				console.log(v)
+			})
+
+	类数组对象
+		具有length属性,且不会随着成员数量的变化而变化。也无法使用数组的方法，因为没有继承Array.prototype
+		var o = {
+			0: "a",
+			1: 'b',
+			2: 'c',
+			length: 3
+		}
+
+		不过我们可以间接使用 Function.call方法调用
+		Array.prototype.slice.call(o)
+
+#### 函数
+	function test(name) {
+		return name;
+	}
+	test("tg");  //除了实参之外，每次调用还会拥有一个 上下文，这个就是this关键字的值 这里是 this.test("tg")
