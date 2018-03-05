@@ -453,7 +453,7 @@ Javascript
 			2: 'c',
 			length: 3
 		}
-
+		典型的类数组对象，包括函数的arguments,以及大多数DOM元素集，还有字符串
 		不过我们可以间接使用 Function.call方法调用
 		Array.prototype.slice.call(o)
 
@@ -462,3 +462,65 @@ Javascript
 		return name;
 	}
 	test("tg");  //除了实参之外，每次调用还会拥有一个 上下文，这个就是this关键字的值 这里是 this.test("tg")
+	函数可以有多个return语句，但是只能返回一个，当没有返回语句时，最终返回undefined
+	如果函数挂载在一个对象上，就将作为对象的一个属性，也就是对象的方法。
+
+	函数定义 
+		function name(){}
+	函数表达式
+		var f = function (x){console.log(x);}
+	注意：1）如果一个函数被定义多次(声明)，后面的定义会覆盖前面的定义(声明)
+		2）函数会被提前解析，所以可以在调用后面某处声明
+	嵌套函数(闭包实现原理)
+		function test() {
+			var name = 'tg';
+			function test_inside(){
+				var age = 15;
+				console.log(name); //tg
+			}
+			console.log(age); // uncaught referenceError: age is not defined
+		}
+
+	函数调用
+		作为函数 test()
+		作为方法	o.test()
+		作为构造函数	new Test()
+		通过他们的call()和apply()方法间接调用
+
+	函数参数
+		可选形参
+		function go(x, y) {
+			x = x || 1;
+			y = y || 2;
+			console.log(x, y)
+		}
+
+		实参对象
+		// arguments实参对象，是一个类数组对象
+		function go(x) {
+			console.log(arguments[0]);
+			console.log(arguments[1]);
+			console.log(arguments.length); // 2
+			console.log(arguments);
+		}
+		go('ab', 'cd'); // ab cd 
+
+		callee 和 caller 属性 
+
+		//类数组可以通过Array.prototype，即数组的原型对象这种方法，调用数组的方法
+		function go(x) {
+			console.log(Array.prototype.slice.call(arguments, 0));
+			console.log([].slice.call(arguments, 2)) // 简化写法
+		}
+
+		参数的传递类型 
+		按值传递(复制值，形参不改变实参)和按引用传递(将值得地址复制给一个局部变量，指向同一处)
+		function test(obj) {
+			obj.name = 'test'; // 此处，obj指向person对象
+			obj = new Object();	// obj又指向了一个新对象
+			obj.name = 'new';
+		}
+
+		var person = new Object();
+		test(person);
+		console.log(person.name);
