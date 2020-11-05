@@ -1,0 +1,193 @@
+============= 微信 ============
+
+1 微信退款时，先要判断return_code，再判断result_code是否为success/fail 
+	{
+		"status": "SUCCESS",
+		"data": {
+			"return_code": "SUCCESS", //首先判断
+			"return_msg": "OK",		//错误提示
+			"appid": "wx1d08757f92bb8fff",
+			"mch_id": "1418488902",
+			"nonce_str": "HSMVgnNelnMbt8fx",
+			"sign": "F2535702482B23162C091F6F48C60E27",
+			"result_code": "SUCCESS",	//如果成功时，貌似没有err_code_des这个字段
+			"transaction_id": "4200000097201802057441769714",
+			"out_trade_no": "ODR2018020516342",
+			"out_refund_no": "r_2018020585896",
+			"refund_id": "50000205552018020503443704515",
+			"refund_channel": [],
+			"refund_fee": "4",
+			"coupon_refund_fee": "0",
+			"total_fee": "4",
+			"cash_fee": "4",
+			"coupon_refund_count": "0",
+			"cash_refund_fee": "4"
+		}
+	}
+
+	{
+	"status": "SUCCESS",
+	"data": {
+		"return_code": "SUCCESS",
+		"return_msg": "OK",
+		"appid": "wxeb1fb4e1ede5ead1",
+		"mch_id": "1263998801",
+		"nonce_str": "0p7x1cTxS9QgLmli",
+		"sign": "0156164D1C78B957954ECB0ADD0584F7",
+		"result_code": "FAIL", //退款失败
+		"err_code": "USER_ACCOUNT_ABNORMAL",
+		"err_code_des": "用户账户异常或已注销，不能原路退回，请使用其他方式进行退款。" //错误提示
+	}
+}
+
+
+============= Javascript ============
+1. 数组赋值
+	var a = [1,2,3];
+	var b = a; //b与a指向同一个地址，修改a, b也会随之改变
+	var b = [].concat(a); // 相当于copy了一个a，两个没有引用关联了，互不影响
+
+2. layer弹框，点击按钮会关闭上一个弹框，可以在按钮调用的方法中返回false，从而阻止上层弹框被关闭
+
+3.
+
+
+
+
+============= PHP ============
+1. php命令行
+	php -i|grep 'php.ini'
+	php --ini 快速查看php.ini位置
+
+	php -l 仅仅检查语法有无错误
+
+	php -f 编译并运行php文件
+
+	php -i phpinfo() 
+
+	php -m 查看已安装的模块
+
+	php -r 直接运行php代码，不需要php标记
+
+2. 安装xdebug
+	http://mite.site/imooc-api/index.php/index/index/index/name/jackson?XDEBUG_SESSION_START=12666
+	http://mine.site/imooc-api/index.php/index/index/index/name/jackson
+
+3. pcel安装swoole,真方便啊
+	pecl install swoole 
+	各个配置让自己去选择yes还是no
+	/private/tmp/pear/install/swoole/configure --with-php-config=/usr/bin/php-config --enable-swoole-debug=yes --enable-sockets=yes --enable-openssl=yes --enable-http2=yes --enable-async-redis=yes --enable-mysqlnd=yes --enable-coroutine-postgresql=yes
+4. 隐藏php模块显示
+	expose_php off
+
+5. 使用PHP内置服务器
+	php -S localhost:8080 -t /path/to/public
+
+6. curl访问
+	GET
+		curl -i -X GET http://localhost/my-rest-api/api/robots/3
+	POST
+		curl -i -X POST -d '{"name":"C-3PO","type":"droid","year":1977}'
+    http://localhost/my-rest-api/api/robots
+
+
+============= Linux ============
+
+1 linux搭建svn服务 https://help.aliyun.com/document_detail/52864.html?spm=5176.8208715.110.1.13413f34RJqZb5
+	svnadmin create /var/svn
+	cd /var/svn ...
+
+	svnserve -d -r /var/svn/svnrepos 	//开启svn服务
+	ps -ef |grep svn 					//查看SVN服务是否开启。
+	killall svnserve					//停止所有svn服务
+
+	添加安全组规则
+		SVN服务的默认端口为TCP 3690。您需要登录 ECS管理控制台，添加安全组规则 放行TCP 3690端口。
+
+	svn checkout svn://gzluxia.vicp.net:10613/rebuy 然后用户名，密码
+	svn update
+
+yum因为python版本原因无法使用 https://www.jianshu.com/p/6425d18d3e47
+
+2. mac 切换超级root用户
+	sudo -i
+
+3. taif -f /var/logs/rebuy.log
+
+4. mac phpredis 安装[客户端]
+	https://github.com/phpredis/phpredis/tree/master 去下载phpredis
+	git clone 路径
+	然后cd 路径
+	找到当前使用的php版本，找到phpize路径和php-config命令路径
+
+	再回到phpredis目录中
+	sudo phpize命令路径
+	sudo ./configure --enable-redis-igbinary --with-php-config=php-config命令路径
+	sudo make && make install 
+
+	#可以使用pecl直接安装 还没有试过
+
+	修改配置文件，重启服务器
+
+	redis 安装 比较简单
+	去redis.io下载稳定版
+	tar zxf 压缩包
+	cd 目录
+	vim readme.md
+	根据提示安装 （make即可）
+
+	ps aux|grep redis 
+
+	./src/redis-server 
+	./src/redis-cli  shutdown 关闭
+	kill -9 进程id
+
+6. Linux 命令
+	ctrl+a 跳到命令行行首
+	ctrl+e 调到命令行行首
+	ctrl+f 翻页--下一页
+	ctrl+b 翻页--上一页
+
+	cp -R 目录 新路径  将目录copy到新路径
+	diff file1 file2 对比文件1和文件2的差异
+	diff dir1  dir2 > change.log  将目录1和目录2中文件差异输出到change.log中
+
+7. MAC安装swoole
+	wget 
+	tar zxf swoole-2.1.3.tgz
+	cd swoole-2.1.3
+	/Applications/MAMP/bin/php/php7.0.15/bin/phpize
+	brew install openssl
+	#将openssl中include/openssl cp到swoole的include目录下
+	cd /usr/local/Cellar/openssl/1.0.2o_1/include/openssl /Applications/MAMP/bin/php/php7.0.15/bin/src/swoole-2.1.3/include/openssl
+	./configure --with-php-config=/Applications/MAMP/bin/php/php7.0.15/bin/php-config --enable-sockets --enable-openssl  --enable-mysqlnd
+	
+	注意：
+	1. 多进程[or worker]之间共享变量：无法通过全局变量实现，需要通过redis,memmache或者mysql的方式实现,Swoole\Atomic或Swoole\Table也很好。 【进程隔离，互不影响】
+	2. 类、函数文件的引入： 使用require_once或者include_once， 防止重定义报错
+	3. 异步编程时，不要使用阻塞函数。如sleep(),也不要使用exit或者die(),异常要使用try...catch()捕捉，可使用register_shutdown_function来捕致命错误。
+	4. worker 进程不能共用同一个redis或者mysql连接，创建代码可以放在onWorkStart回调函数中
+	5. 魔术方法、反射函数、对象析构函数、call_user_func[_array]中使用协程API
+	6. 使用类静态变量、全局变量保存上下文
+	7. 跟踪调试扩展可能会导致swoole2.0发生崩溃
+	8. 请不要造ob_函数中间使用协程API
+
+8. 使用ssh开放数据库端口到本地，不对外开放
+	ssh -L 3360:127.0.0.1:3306 dev@mall.yzidea.net
+9. 检查端口占用情况
+	lsof -i:port
+
+
+============= 正则 ============
+
+
+============= 其他 ============
+1.processon 画流程图和数据图很方便
+2. 微信 easywechat
+3. 布局 element + vue
+4. esayswoole
+
+============= MySQL ============
+
+
+

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="container">
+		
+	</div>
+</body>
+<script src="../js/jquery.js"></script>
+<script>
+	$(function(){
+		function ajax(url, data, type, params){
+			params = params || {};
+			return $.ajax({
+				    url : url, // 请求地址
+				    data : data || "",   // 发送的数据
+				    dataType : params.dataType || 'json',// 返回的数据格式
+				    type : type || "GET",     // 请求的方式：get|post
+				    headers: params.header || {},
+				    // 发送前执行
+				    // beforeSend : function(){
+				    //     console.log("beforeSend");
+				    // },
+				    // // 返回成功执行
+				    // success : function(result){
+				    //     resolve(result);
+				    // },
+				    // // // 返回失败执行
+				    // error : function(XMLHttpRequest, textStatus, errorThrown){
+				    // 	console.log(XMLHttpRequest)
+				    //     reject(XMLHttpRequest);
+				    // },
+				    // // 无论成功还是失败都会执行
+				    // complete : function(){
+				    //     console.log('complete');
+				    // },
+				    // // 状态码对应的操作
+				    // statusCode : {
+				    //     200 : function(){
+				    //         console.log("200, ok");
+				    //     },
+				    //     404 : function(){
+				    //         console.log("404, page not found");
+				    //     }
+				    // }
+				});
+		};
+
+		var newTimeout = function(ms) {
+			return new Promise(function(resolve, reject){
+				return setTimeout(resolve, ms);
+			});
+		};
+
+			// console.log(typeof newTimeout);
+
+		// newTimeout(2000).then(function(){
+		// 	console.log('first');
+		// 	return newTimeout(3000);	// 执行完then之后，会再等待3秒
+		// 	newTimeout(3000); //不return，执行完then之后，会直接出发第二个then的执行。
+		// }).then(function(){
+		// 	console.log(666);
+		// });
+		// 
+		//
+		// return false; 
+		function debug(msg){
+			console.log(msg);
+		}
+		
+		// ajax的then和done方法不同，done的话，就是绑定多个回调，不会等待。
+		// then的话，会等待
+		var aaa = ajax('/php/index.php',null, null, {header: {'X-Pjax': true}})
+			.then(function(res){
+				console.log(res);
+				// return newTimeout(5000).then(()=>debug("timeout"));
+				// return ajax('/php/index.php');
+				return ajax('/php/index.php');
+			})
+			.then(function(res){
+				debug("2 then");
+			})
+			// .fail(function(){
+			// 	debug("fail");
+			// })
+			// .always(function(){
+			// 	debug("shit");
+			// 	return newTimeout(2000).then(()=>debug("timeout"));
+			// })
+			// .catch(function(){
+			// 	debug("catch exception");
+
+			// })
+			.then(function(){
+				debug('3 then');
+			});
+
+		// ajax('/php/index.php').then(function(res){
+		// 	console.log(res);
+		// })
+		console.log(aaa);
+	});
+</script>
+</html>

@@ -1,0 +1,12 @@
+.project
+.settings
+.vendor/
+.idea/
+.DS_Store
+vendor/
+phpunit/
+php/league-csv/
+php/phpoffice/
+php/chunk/temp
+php/chunk/upload_log.txt
+uploads/
