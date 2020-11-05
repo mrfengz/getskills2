@@ -1,0 +1,70 @@
+<a href="#" id="browseButton">Select files</a>
+<button id="pause" onclick="pause()">暂停</button>
+
+<div class="progress">
+    <p id="bar"></p>
+</div>
+
+<script src="resumable.js"></script>
+<script>
+var r = new Resumable({
+  target: 'upload.php'
+});
+
+r.assignBrowse(document.getElementById('browseButton'));
+
+r.on('fileSuccess', function(file){
+    console.log('fileSuccess',file);
+  });
+r.on('fileProgress', function(file){
+    var num = Math.floor(r.progress() * 100);
+
+    console.log("progress=" + num + '%');
+    // console.log('fileProgress', file);
+  });
+r.on('fileAdded', function(file, event){
+    r.upload();
+    console.log('fileAdded');
+  });
+r.on('filesAdded', function(array){
+    r.upload();
+    console.log('filesAdded');
+  });
+r.on('fileRetry', function(file){
+    console.log('fileRetry', file);
+  });
+r.on('fileError', function(file, message){
+    console.log('fileError', file, message);
+  });
+r.on('uploadStart', function(){
+    console.log('uploadStart');
+  });
+r.on('complete', function(){
+    console.log('complete');
+  });
+r.on('progress', function(){
+    console.log('progress');
+  });
+r.on('error', function(message, file){
+    console.log('error', message, file);
+  });
+r.on('pause', function(){
+    console.log('pause');
+  });
+r.on('cancel', function(){
+    console.log('cancel');
+  });
+
+function pause(){
+    if (r.files.length>0) {
+        if (r.isUploading()) {
+            return  r.pause();
+        }
+        return r.upload();
+    }
+}
+
+</script>
+
+
+

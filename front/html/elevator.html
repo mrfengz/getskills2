@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>电梯控制</title>
+    <script src="../js/jquery.js"></script>
+    <style>
+        .active{background-color:green}
+    </style>
+</head>
+<body>
+    <ul>逻辑：
+        <li>1.刚开始停在1层。</li>
+        <li>2.有人进入后，摁下需要的楼层，点击关门</li>
+        <li>3.关门后，根据停止的楼层数组，决定是否停止</li>
+        <li>4.停止：开门，关门，继续爬升</li>
+        <li>5.挡停止楼层数组为空时，停止不动</li>
+    </ul>
+
+    <table border="1" width="300px">
+        <caption>瀚海大厦</caption>
+        <tr>
+            <td>10</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="active">1</td>
+            <td>
+                <button class="btn btn-default up">上</button>
+                <button class="btn btn-default down">下</button>
+                <button class="btn btn-default close">关</button>
+                <button class="btn btn-default open">开</button>
+            </td>
+        </tr>
+    </table>
+    <script>
+        $(function(){
+            var nowLayer = 1,
+                upList = [],
+                timer,
+                sort = 'unknown',
+                continueRun = false,
+                downList = [];
+
+            //上升
+            $('.up').on('click', function(){
+                if (sort == 'unknown') sort = 'up';
+                var layer = $(this).parents('tr').find('td').eq(0).text();
+                console.log('想到的楼层：'+layer+',  方向：'+sort);
+                //如果楼层小于当前楼层，直接跳过
+                if (layer <= nowLayer)
+                    return false;
+
+                //防止重复添加
+                if ($.inArray(layer, upList) == -1)
+                    upList.push(Number(layer));
+                upList.sort();
+
+                console.log('停止楼层'+upList);
+            });
+
+            //关门
+            $(".close").on('click', function(){
+                console.log('关门：楼层'+$(this).parents('tr').find('td:first').text());
+                run($(this).parents('tr').find('td:first').text(), sort);
+            });
+
+            //run(1, 'up');
+
+            //设置楼层，需要3秒才能到下一楼层
+            function run(now, sort)
+            {
+                var index,
+                    total = 10;
+                console.log(now, sort);
+                timer = setInterval(function(){
+                    console.log('run: 当前楼层'+nowLayer + ', 停止楼层集合', upList);
+                    if(upList.length == 0) {
+                        clearInterval(timer); //如果队列中没有楼层了，那么就不动了
+                    } else {
+                        console.log('----', $.inArray(nowLayer, upList));
+                        if ($.inArray(nowLayer, upList) != -1){ //停止时，弹出该楼层号
+                            clearInterval(timer);
+                            openDoor();
+                            //关门并继续运行
+                            closeDoor();
+                            if (!continueRun)
+                                return ;
+                        }
+
+                        if (sort == 'up') {
+                            now++;
+                            index = total-now;
+                        } else if(sort == 'down') {
+                            now--;
+                            index = now;
+                        }
+                        $('tr').eq(index).siblings().find('td:first').removeClass('active');
+                        $('tr').eq(index).find('td:first').addClass('active');
+                        nowLayer = now;
+                    }
+                }, 1000);
+            }
+
+            //开门，停靠楼层队列剔除当前楼层
+            function openDoor()
+            {
+                console.log('楼层'+nowLayer+'开门，暂停2秒');
+                if (sort == 'up') {
+                    upList.shift();
+                } else if(sort == 'down'){
+                    upList.pop();
+                }
+                console.log(upList);
+                clearInterval(timer);
+                sleep(2);
+            }
+
+            /**
+             * 关门，判断是否继续运行
+             * 没有停靠队列，重置sort
+             */
+            function closeDoor()
+            {
+                console.log('楼层'+nowLayer+'关门，继续运行');
+                if (upList.length) {
+                    run(nowLayer, sort);
+                    continueRun = true;
+                } else {
+                    continueRun = false;
+                    sort = 'unknown';
+                    if (nowLayer == 10) {
+                        sort = 'down';
+                    } else if(nowLayer == 1){
+                        sort = 'up';
+                    }
+                }
+            }
+
+            function sleep(seconds) {
+                var start = (new Date()).getTime();
+                while(true) {
+                    if ((new Date().getTime()) - start > seconds * 1000) {
+                        break;
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>

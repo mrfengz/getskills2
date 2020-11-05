@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <style>
+        /*缩略图*/
+        #preview img{width:80px; padding:10px;}
+        /*拖拽*/
+        #test-drop{margin: 30px;}
+        #dropzone{width:80%;height:200px;border: 1px solid #2b542c}
+    </style>
+
+    <script src="../js/jquery.js"></script>
+    <title>File API</title>
+</head>
+<body>
+    <h2>File API</h2>
+    <cite><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/File/Using_files_from_web_applications">参考链接</a></cite>
+
+    <form action="">
+        <filedset>
+            <input type="file" id="file" onchange="handleFiles(this.files)" multiple>
+        </filedset>
+    </form>
+
+    <div id="preview"></div>
+
+
+    <div id="test-drop">
+        <p>拖动到这个区域</p>
+        <div id="dropzone"></div>
+    </div>
+
+    <script>
+        function handleFiles(files){
+            var numFiles = files.length; //选择的文件数量
+
+            //加入到preview缩略图中
+            addPreview(files);
+
+            //循环获取文件对象
+            for(var i=0; i<numFiles; i++) {
+                var file = files[i];
+                /*
+                {
+                    lastModified: 1520913213000
+                    lastModifiedDate: Tue Mar 13 2018 11:53:33 GMT+0800 (中国标准时间) {}
+                    name: "taohua.jpg"
+                    size: 294302
+                    type: "image/jpeg"
+                    webkitRelativePath: ""
+                 }
+                 */
+                // console.log(file);
+
+                //显示选中文件的个数和总大小
+                console.log(totalFilesAndSize());
+            }
+        }
+
+        //动态添加监听事件 dynamaticall add eventlistener for change files
+        var ele = document.getElementById('file');
+        ele.addEventListener('change', handleFiles2, false);
+        function handleFiles2(){
+            var fileList = this.files; //FileList Object: container many file Object you choosed;  fileList[0] is a file Object
+
+        }
+
+        //获取选中文件总个数和总大小
+        function totalFilesAndSize() {
+            var nBytes = 0,
+                oFiles = document.getElementById("file").files,
+                nFiles = oFiles.length;
+            for (var nFileId = 0; nFileId < nFiles; nFileId++) {
+                //计算总大小 bytes
+                nBytes += oFiles[nFileId].size;
+            }
+            var sOutput = nBytes + " bytes";
+            // optional code for multiples approximation
+            for (var aMultiples = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"], nMultiple = 0, nApprox = nBytes / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
+                sOutput = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + nBytes + " bytes)";
+            }
+            // end of optional code
+            return {fileNum: nFiles, sizeSum: sOutput};
+        }
+
+        //------------- drag 拖拽文件 未报错，但是也没有效果----------
+
+        var dropbox = document.getElementById('dropzone');
+        dropzone.addEventListener('dragenter', dragenter, false);
+        dropzone.addEventListener('dragover', dragover, false);
+        dropzone.addEventListener('drop', drop, false);
+
+        //dragenter 和 dragover事件都很简单，禁止事件传播和阻止默认事件即可
+        function dragenter(e){
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        function dragover(e){
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        //真正的大佬
+        function drop(e){
+            e.stopPropagation();
+            e.preventDefault();
+console.log(e);
+            var dt = e.dataTransfer;
+            var files = dt.files;
+            handleFiles(files);
+        }
+
+        // ---------- 拖拽实验结束 --------
+
+        // 3 ------------ 显示选择的文件的缩略图 --------
+        function addPreview(files)
+        {
+            for(var i = 0; i < files.length; i++){
+                var file = files[i];
+                var imageType = /^image\//;
+
+                if (!imageType.test(file.type)) {
+                    continue;
+                }
+
+                var img = document.createElement('img'),
+                    preview = document.getElementById('preview');
+                img.classList.add('obj');
+                img.file = file; //允许稍后使用fileReader拿到实际上传的图片
+                preview.appendChild(img);
+
+                var reader = new FileReader();
+                reader.onload = (function(aImg){
+                    return function(e){
+                        aImg.src = e.target.result;
+                    }
+                })(img);
+                reader.readAsDataURL(file);
+            }
+        }
+
+    </script>
+</body>
+</html>

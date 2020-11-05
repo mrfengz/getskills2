@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>断点上传</title>
+    <script src="../../js/jquery.js"></script>
+</head>
+<body>
+    <form id="upload_form" action="/upload" method="post">
+        <label for="file_input">Select Files:</label>
+        <input id="file_input" type="file" multiple>
+        <div>
+            <input id="submit_btn" type="submit" value="Upload" disabled>
+        </div>
+    </form>
+    <ul id="file_list" style="display: none;">
+        <!-- File data will be listed here -->
+    </ul>
+
+    <script>
+        /**
+         * 获取带有单位的文件大小
+         * Utility method to format bytes into the most logical magnitude (KB, MB,
+         * or GB). 注意： 需要先将大小转为Number
+         */
+        Number.prototype.formatBytes = function() {
+            var units = ['B', 'KB', 'MB', 'GB', 'TB'],
+                bytes = this,
+                i;
+
+            for (i = 0; bytes >= 1024 && i < 4; i++) {
+                bytes /= 1024;
+            }
+
+            return bytes.toFixed(2) + units[i];
+        }
+
+
+        $(document).ready(function() {
+            var upload_form = $('#upload_form'),
+                file_input = $('#file_input'),
+                file_list = $('#file_list'),
+                submit_btn = $('#submit_btn'),
+                uploaders = [];
+            //修改文件域内容
+            file_input.on('change', onFilesSelected);
+            //绑定提交表单操作
+            upload_form.on('submit', onFormSubmit);
+
+            /**
+             * 选择文件操作
+             * Loops through the selected files, displays their file name and size
+             * in the file list, and enables the submit button for uploading.
+             */
+            function onFilesSelected(e) {
+                var files = e.target.files,
+                    file,
+                    list_item,
+                    uploader;
+
+                for (var i = 0; i < files.length; i++) {
+                    file = files[i];
+                    //初始化uploader
+                    uploader = new ChunkedUploader(file);
+                    //添加到uploaders中
+                    uploaders.push(uploader);
+                    //添加暂停按钮， 点击可切换 暂停/继续
+                    list_item = $('<li>' + file.name + '(' + file.size.formatBytes() + ') <button>Pause</button></li>').data('uploader', uploader);
+                    file_list.append(list_item);
+                }
+
+                file_list.show();
+                submit_btn.attr('disabled', false);
+            }
+
+            //暂停按钮绑定暂停操作
+            file_list.find('button').on('click', onPauseClick);
+
+            /**
+             * 暂停/继续上传
+             * Toggles pause method of the button's related uploader instance.
+             */
+            function onPauseClick(e) {
+                var btn = $(this),
+                    uploader = btn.parent('li').data('uploader');
+
+                if (btn.hasClass('paused')) {
+                    btn.removeClass('paused').text('Pause');
+                    uploader.resume();
+                }
+                else {
+                    btn.addClass('paused').text('Resume');
+                    uploader.pause();
+                }
+            }
+
+            /**
+             * 阻止默认提交，上传多个文件
+             * Loops through all known uploads and starts each upload
+             * process, preventing default form submission.
+             */
+            function onFormSubmit(e) {
+                $.each(uploaders, function(i, uploader) {
+                    uploader.start();
+                });
+
+                // Prevent default form submission
+                e.preventDefault();
+            }
+        });
+
+
+        function ChunkedUploader(file, options) {
+            if (!this instanceof ChunkedUploader) {
+                return new ChunkedUploader(file, options);
+            }
+            this.file = file;
+
+            this.options = $.extend({
+                url: '/php/phptest/php/upload.php'
+            }, options);
+
+            this.file_size = this.file.size;
+            this.chunk_size = (1024 * 100); // 100KB
+            this.range_start = 0;
+            this.range_end = this.chunk_size;
+
+            if ('mozSlice' in this.file) {
+                this.slice_method = 'mozSlice';
+            }
+            else if ('webkitSlice' in this.file) {
+                this.slice_method = 'webkitSlice';
+            }
+            else {
+                this.slice_method = 'slice';
+            }
+
+            this.upload_request = new XMLHttpRequest();
+            this.upload_request.onload = this._onChunkComplete.apply(this);
+            // 断线和连线事件监听 Respond to changes in connection
+            if ('onLine' in navigator) {
+                window.addEventListener('online', this._onConnectionFound);
+                window.addEventListener('offline', this._onConnectionLost);
+            }
+        }
+
+        ChunkedUploader.prototype = {
+
+            // Internal Methods __________________________________________________
+
+            _upload: function() {
+                var self = this,
+                    chunk;
+console.log(self.range_start, self.range_end);
+                // Slight timeout needed here (File read / AJAX readystate conflict?)
+                setTimeout(function() {
+                    // Prevent range overflow 防止range范围超出文件大小
+                    if (self.range_end > self.file_size) {
+                        self.range_end = self.file_size;
+                    }
+                    //切割文件内容为chunk尺寸大小的块，最后一次使用剩余的大小
+                    chunk = self.file[self.slice_method](self.range_start, self.range_end);
+                    //使用ajax传输数据
+                    self.upload_request.open('PUT', self.options.url, true);
+                    self.upload_request.overrideMimeType('application/octet-stream');
+                    //发送header头， Content-Range: bytes start-end/total;
+                    if (self.range_start !== 0) {
+                        self.upload_request.setRequestHeader('Content-Range', 'bytes ' + self.range_start + '-' + self.range_end + '/' + self.file_size);
+                    }
+                    //发送数据
+                    self.upload_request.send(chunk);
+
+                    // TODO
+                    // From the looks of things, jQuery expects a string or a map
+                    // to be assigned to the "data" option. We'll have to use
+                    // XMLHttpRequest object directly for now...
+                    /*$.ajax(self.options.url, {
+                        data: chunk,
+                        type: 'PUT',
+                        mimeType: 'application/octet-stream',
+                        headers: (self.range_start !== 0) ? {
+                            'Content-Range': ('bytes ' + self.range_start + '-' + self.range_end + '/' + self.file_size)
+                        } : {},
+                        success: self._onChunkComplete
+                    });*/
+                }, 20);
+            },
+
+            // Event Handlers ____________________________________________________
+
+            //chunk上传完毕后
+            _onChunkComplete: function(e) {
+                console.log(e, this);
+                // If the end range is already the same size as our file, we
+                // can assume that our last chunk has been processed and exit
+                // out of the function.
+                //如果已经传输完毕，就调用_onUploadComplete()方法
+                if (this.range_end === this.file_size) {
+                    this._onUploadComplete();
+                    return;
+                }
+
+                // Update our ranges
+                // 更新range范围
+                this.range_start = this.range_end;
+                this.range_end = this.range_start + this.chunk_size;
+
+                // Continue as long as we aren't paused
+                //如果没有点击停止，继续上传
+                if (!this.is_paused) {
+                    this._upload();
+                }
+            },
+            //上传完毕
+            _onUploadComplete: function(){
+                console.log('yes, you can!');
+            },
+            //重新连接
+            _onConnectionFound: function () {
+                this.resume();
+            },
+            //断线
+            _onConnectionLost: function () {
+                this.pause();
+            },
+
+            // Public Methods ____________________________________________________
+            //开始上传
+            start: function() {
+                this._upload();
+            },
+            //暂停上传
+            pause: function() {
+                this.is_paused = true;
+            },
+            //恢复上传
+            resume: function() {
+                this.is_paused = false;
+                this._upload();
+            }
+        };
+
+
+    </script>
+
+</body>
+</html>

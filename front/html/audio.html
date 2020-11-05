@@ -1,0 +1,50 @@
+<!--web audio api-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+
+<script>
+    var context;
+    if (typeof AudioContext !== "undefined") {
+        context = new AudioContext();
+    } else if (typeof webkitAudioContext !== "undefined") {
+        context = new webkitAudioContext();
+    } else {
+        throw new Error('AudioContext not supported. :(');
+    }
+    console.log(context);
+
+    var audioFileUrl = location.origin+'/uploads/Alex Goot,Madilyn Bailey - Something Just Like This.mp3';
+    //创建一个sound source
+    var request = new XMLHttpRequest();
+    request.open("GET", audioFileUrl, true);
+    request.responseType = "arraybuffer";
+
+    // Our asynchronous callback
+    request.onload = function() {
+        var audioData = request.response;
+        createSoundSource(audioData);
+    };
+    request.send();
+
+    // create a sound source
+    soundSource = context.createBufferSource();
+
+    // The Audio Context handles creating source
+    // buffers from raw binary data
+    context.decodeAudioData(audioData, function(soundBuffer){
+        // Add the buffered data to our object
+        soundSource.buffer = soundBuffer;
+    });
+
+</script>
+</body>
+</html>

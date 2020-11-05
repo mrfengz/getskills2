@@ -1,0 +1,102 @@
+{
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.3"
+    }
+}
+
+
+{
+    "name": "rebuy/rebuy",  # 开发者名称/包名
+    "description": "Rebuy SaaS Project", #描述
+    "type": "library", # 类型 application 和 library， application一般是root package，依赖多个libraries
+    "license": "Proprietary", #这个表示私有项目，比如Apache-2.0, MIT, BSD-2-Clause
+    "minimum-stability": "dev", #只能用在root package上， stable, RC, beta, alpha, dev 稳定性倒序排列
+    "prefer-stable": true,
+    "optimize-autoloader": true,
+    "require": {#依赖的套件 "开发者名称/package-name":"version"  #版本规则 1. 1.0.1(明确指定)  2.范围指定 >=1.0.1,<2.0 3.通配符指定 1.0.* 4.~1.2== >=1.2,<2.0; ~1.3.1 == >=1.3.1,<1.4.0
+        "php": ">=7.0",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-PDO": "*",
+        "ext-mbstring": "*",
+        "wikimedia/composer-merge-plugin": "~1.3"
+    },
+    "scripts": {
+        "pre-update-cmd": [
+            "bin/import-package",
+            "bin/decide-env"
+        ],
+        "post-install-cmd": [
+            "bin/install/generate-cookie-encrypt-key"
+        ],
+        "pre-autoload-dump": [
+        ],
+        "post-autoload-dump": [
+            "bin/convert-autoload",
+            "vendor/bin/update-phwoolcon-package-resource",
+            "bin/cli clear:cache -calmr"
+        ],
+        "pure-update": "@composer update --no-scripts"
+    },
+    "extra": {
+        "merge-plugin": {
+            "include": [
+                "composer.local*.json"
+            ]
+        }
+    }
+}
+
+
+#帮助
+composer list
+composer help <command>
+composer show -i #查看已安装的composer包
+    composer show -p #查看已安装的平台安装包(包括php扩展)
+
+#克隆一个包
+composer create-project 包名 保存路径 版本号
+
+#声明依赖
+composer require [--dev] 包名
+        require --dev 仅在开发环境安装的包，比如ide-helper
+
+#卸载依赖
+composer remove 包名
+
+composer install --profile --prefer-dist --optimize-autoloader
+    --profile 显示时间和内存使用信息
+    --optimize-autoloader 优化自动加载获得20%~25%提升
+    --prefer-dist 大幅加快下载速度 ，忽略包下的.git目录从而回避对根目录git系统的影响
+
+# 更新依赖
+    composer update 包名 --prefer-dist 只更新指定包
+
+#非官方repo引入方式
+    1. git版本库
+    {
+        "type":"git",
+        "url":"ssh://....git"
+    }
+
+    2. path本地路径
+    {
+        "type":"path",
+        "url":"包的相对路径"
+    }
+
+    3.composer源
+    {
+        "type": "composer",
+        "url": "https://packagist.phpcomposer.com"
+    }
+
+#自动加载
+    {
+        "autoload": {
+            "files": [
+                "文件路径",
+            ]
+        }
+    }

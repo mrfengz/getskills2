@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    #main {
+        font-family:Helvetica,Arial,sans-serif;
+        width:30%;
+        opacity: 1;
+        transition: opacity 0.20s linear;
+        height: 100px;
+    }
+    #main.loading {
+        opacity: 0.5;
+    }
+    h2 {margin-left:200px;}
+    ul{padding-left:15px; list-style:none;}
+</style>
+<body>
+<section id="container">
+    <h2>哈喽</h2>
+    <p>{$who}</p>
+    <p>{$cry}</p>
+    <a href="{:url('test1')}" data-pjax>test1</a>
+    <a href="{:url('test2')}" data-pjax>test2</a>
+</section>
+
+<div class="main">
+
+</div>
+
+
+<script src="<?php echo config('app_path') . '/static/';?>js/jquery-3.3.1.min.js"></script>
+<script src="<?php echo config('app_path') . '/static/';?>js/jquery.pjax.js"></script>
+<!--<script type="text/javascript">-->
+    <!--var direction = "right";-->
+    <!--$(document).ready(function(){-->
+        <!--$(document).pjax('a', '#main');-->
+        <!--$(document).on('pjax:start', function() {-->
+            <!--$(this).addClass('loading')-->
+        <!--});-->
+        <!--$(document).on('pjax:end', function() {-->
+            <!--$(this).removeClass('loading')-->
+        <!--});-->
+    <!--});-->
+<!--</script>-->
+    <script>
+      $(function(){
+          if ($.support.pjax) {
+              $('#main').pjax('a');
+          } else {
+              console.log('your browser doesn\'t pjax, please use browser that supports pjax.');
+          }
+      })
+
+    </script>
+</body>
+</html>

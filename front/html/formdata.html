@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../js/jquery.js"></script>
+    <title>FormData</title>
+    <style>
+        #progress{background-color:green;width: 0;height: 40px;line-height: 40px;font-size: 18px;text-align: center;color:white;}
+    </style>
+</head>
+<body>
+
+<form action="" id="form">
+    <input type="file" id="imgs" multiple /> <!-- accept="image/*"-->
+</form>
+
+<div id="progress">
+    0%
+</div>
+
+<script>
+    $(function(){
+        if(!window.FormData){
+            alert('您的浏览器不支持FormData，请升级或更换浏览器');
+        } else {
+            $('#imgs').on('change', function(e){
+                var myForm = new FormData();
+                for(var i =0, len = document.getElementById('imgs').files.length; i< len; i++) {
+                    myForm.append('img[]', document.getElementById('imgs').files[i]);
+                }
+                $.ajax({
+                    url: '/php/phptest/php/upload.php',
+                    method: 'POST',
+                    data: myForm,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    cache: false,
+                    xhr: function(){
+                        myXhr = $.ajaxSettings.xhr();
+                        if(myXhr.upload){ //检查upload属性是否存在
+                            //绑定progress事件的回调函数
+                            myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+                        }
+                        return myXhr; //xhr对象返回给jQuery使用
+                    },
+                }).done(function(data){
+                    console.log(data);
+                }).fail(function(data){
+                    console.log(data);
+                }).always(function(res){
+                    console.log(res);
+                })
+            });
+        }
+
+        //上传进度回调函数：
+        function progressHandlingFunction(e) {
+            if (e.lengthComputable) {
+                var percent = e.loaded/e.total*100; //e.loaded 已上传大小 e.total 总大小
+                $('#progress').css('width', percent + '%').html(e.loaded + "/" + e.total+" bytes. " + percent.toFixed(2) + "%");
+            }
+        }
+    });
+</script>
+</body>
+</html>

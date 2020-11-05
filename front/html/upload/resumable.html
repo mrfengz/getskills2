@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Resumable</title>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../libs/bootstrap-3.3.5/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../../libs/bootstrap-3.3.5/dist/css/bootstrap-theme.css">
+</head>
+<body>
+    <a href="#" id="browseButton">Select files</a>
+    <button class="btn btn-danger" id="pause" onclick="pause()">暂停</button>
+
+    <div class="progress">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="1"
+             aria-valuemin="0" aria-valuemax="100" style="width:0%;height: 16px;">
+            <!--<span class="sr-only">0% 完成</span>-->
+        </div>
+    </div>
+</body>
+</html>
+
+
+<script src="../../libs/resumable/resumable.js"></script>
+<script>
+    var r = new Resumable({
+        target: '../../../php/chunk/resumable.php',
+    });
+
+    r.assignBrowse(document.getElementById('browseButton'));
+
+    r.on('fileSuccess', function(file){
+        console.log('fileSuccess',file);
+    });
+    r.on('fileProgress', function(file){
+        var num = Math.floor(r.progress() * 100);
+        $('.progress div').css('width', num + '%');
+        // console.log('fileProgress', file);
+    });
+    r.on('fileAdded', function(file, event){
+        r.upload();
+        console.log('fileAdded');
+    });
+    r.on('filesAdded', function(array){
+        r.upload();
+        console.log('filesAdded');
+    });
+    r.on('fileRetry', function(file){
+        console.log('fileRetry', file);
+    });
+    r.on('fileError', function(file, message){
+        console.log('fileError', file, message);
+    });
+    r.on('uploadStart', function(){
+        console.log('uploadStart');
+    });
+    r.on('complete', function(){
+        console.log('complete');
+    });
+    r.on('progress', function(){
+        console.log('progress');
+    });
+    r.on('error', function(message, file){
+        console.log('error', message, file);
+    });
+    r.on('pause', function(){
+        console.log('pause');
+    });
+    r.on('cancel', function(){
+        console.log('cancel');
+    });
+
+    function pause(){
+        if (r.files.length>0) {
+            if (r.isUploading()) {
+                return  r.pause();
+            }
+            return r.upload();
+        }
+    }
+
+</script>
+
+
+

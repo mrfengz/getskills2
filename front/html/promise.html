@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<h2>Promise 学习</h2>
+	<p>本质上 Promise 是一个函数返回的对象，我们可以在它上面绑定回调函数，这样我们就不需要在一开始把回调函数作为参数传入这个函数了</p>
+	<code>
+		<pre>
+		const promise = createAuditFileAsync(audioSettings);
+		promise.then(successCallback, failureCallback).then(successCallback2, failureCallback2);
+
+		then()会返回一个新的promise对象。在避免回调地狱上，这个功能很优秀。
+
+		doSomething(function(result) {
+		  doSomethingElse(result, function(newResult) {
+		    doThirdThing(newResult, function(finalResult) {
+		      console.log('Got the final result: ' + finalResult);
+		    }, failureCallback);
+		  }, failureCallback);
+		}, failureCallback);
+
+		doSomething().then(function(result){
+			return doSomethingElse(result);
+		}).then(function(newResult){
+			return doThirdThing(newResult);
+		}).then(function(finalResult){
+			console.log('Got the final result: ' + finalResult);
+		}).catch(failureCallback);
+		</pre>
+	</code>
+	
+	<ul>
+		<li>在本轮 事件循环 运行完成之前，回调函数是不会被调用的。</li>
+		<li>即使异步操作已经完成（成功或失败），在这之后通过 then() 添加的回调函数也会被调用。</li>
+		<li>通过多次调用 then() 可以添加多个回调函数，它们会按照插入顺序进行执行。</li>
+		<li>Tips: 可链式调用</li>
+	</ul>
+
+
+	<ul>Promise 组合
+		<li>Promise.resolve()</li>
+		<li>Promise.reject()</li>
+		<li>Promise.all() 并行操作，相当于 Promise.resolve().then(f1).then(f2).then(f3)  Promise.all([f1(), f2(), f3()]).then(([res1, res2, res3]) => {})</li>
+		<li>Promise.race()</li>
+	</ul>
+
+	<h4 id="log"></h4>
+</body>
+
+<script>
+	function saySomething(msg) {
+		console.log(msg);
+	}
+	// const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+	const wait = function(ms) {
+		return new Promise(function(callback){
+			return setTimeout(callback, ms);
+		});
+	}
+	wait(1000).then(()=>saySomething(" 1 seconds")).then(()=>saySomething("done callback2")).catch(()=>saySomething("error"));
+
+
+	// 
+	var promiseCount = 0;
+
+	function testPromise() {
+	    let thisPromiseCount = ++promiseCount;
+
+	    let log = document.getElementById('log');
+	    log.insertAdjacentHTML('beforeend', thisPromiseCount +
+	        ') 开始 (<small>同步代码开始1</small>)<br/>');
+
+	    // 新构建一个 Promise 实例：使用Promise实现每过一段时间给计数器加一的过程，每段时间间隔为1~3秒不等
+	    let p1 = new Promise(
+	        // resolver 函数在 Promise 成功或失败时都可能被调用
+	       (resolve, reject) => {
+	            log.insertAdjacentHTML('beforeend', thisPromiseCount +
+	                ') Promise 开始2 (<small>异步代码开始</small>)<br/>');
+	            // 创建一个异步调用
+	            window.setTimeout(
+	                function() {
+	                    // 填充 Promise
+	                    resolve(thisPromiseCount);
+	                }, Math.random() * 2000 + 4000);
+	        }
+	    );
+
+	    // Promise 不论成功或失败都会调用 then
+	    // catch() 只有当 promise 失败时才会调用
+	    p1.then(
+	        // 记录填充值
+	        function(val) {
+	            log.insertAdjacentHTML('beforeend', val +
+	                ') Promise 已填充完毕4 (<small>异步代码结束</small>)<br/>');
+	        })
+	    .catch(
+	        // 记录失败原因
+	       (reason) => {
+	            console.log('处理失败的 promise ('+reason+')');
+	        });
+
+	    log.insertAdjacentHTML('beforeend', thisPromiseCount +
+	        ') Promise made (<small>同步代码结束3</small>)<br/>');
+	}
+	testPromise();
+</script>
+</html>

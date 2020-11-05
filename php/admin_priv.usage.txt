@@ -1,0 +1,250 @@
+Targets
+    Occurrences of 'admin_priv' in Directory /Users/fz/Documents/projects/rebuy-git/admin
+Found Occurrences  (192 usages found)
+    Unclassified occurrence  (192 usages found)
+        activity.php  (8 usages found)
+            42 if (!admin_priv('activity_edit')){
+            70 if (!admin_priv('activity_list')){
+            354 if (!admin_priv('activity_list')){
+            388 if (!admin_priv('activity_list')){
+            433 if (!admin_priv('activity_list')){
+            489 if (!admin_priv('activity_edit')){
+            510 if (!admin_priv('activity_edit')){
+            771 if (!admin_priv('activity_goods_list')){
+        ad.php  (3 usages found)
+            46 if (!admin_priv('ad_list')){
+            96 if (!admin_priv('ad_edit')){
+            241 if (!admin_priv('ad_edit')){
+        admin_user.php  (3 usages found)
+            38 if (!admin_priv('admin_user_list')){
+            78 if (!admin_priv('admin_user_edit')){
+            307 if (!admin_priv('admin_user_edit')){
+        app.php  (11 usages found)
+            40 if (!admin_priv('app_list')){
+            67 if(!admin_priv('app_edit')){
+            84 if (!admin_priv('app_edit')){
+            124 if (!admin_priv('app_msg')){
+            151 if (!admin_priv('app_msg_edit')){
+            796 if (!admin_priv('set_barcode_limit')){
+            819 if (!admin_priv('app_edit')){
+            854 if (!admin_priv('create_recorder')){
+            980 if (!admin_priv('app_permit_set')){
+            1015 if (!admin_priv('app_permit_set')){
+            1233 if (!admin_priv('custom_manage')){
+        attribute.php  (3 usages found)
+            36 if (!admin_priv('attribute')){
+            114 if (!admin_priv('attribute_edit')){
+            263 if (!admin_priv('attribute_edit')){
+        attribute_set.php  (3 usages found)
+            31 if (!admin_priv('attribute_group_set')){
+            73 if (! admin_priv ( 'attribute_group_edit' )) {
+            167 if (! admin_priv ( 'attribute_group_edit' )) {
+        barcode.php  (1 usage found)
+            23 if(!admin_priv('barcode_search')){
+        barcode_authority.php  (2 usages found)
+            21 if (!admin_priv('barcode_auth_set')){
+            80 if (!admin_priv('barcode_auth_set')){
+        barcode_classify.php  (1 usage found)
+            28 if(!admin_priv('cat_barcode')){
+        barcode_company_info.php  (3 usages found)
+            19 if (!admin_priv('barcode_company_info')){
+            47 if (!admin_priv('barcode_company_info')){
+            105 if (!admin_priv('barcode_company_info')){
+        barcode_data_helper.php  (26 usages found)
+            232 'goods' => admin_priv('barcode_relation_good'),
+            233 'made_date' => admin_priv('barcode_product_date'),
+            234 'warranty_days' => admin_priv('quality_guarantee_period'),
+            235 'warranty_deadline' => admin_priv('quality_guarantee_period_date'),
+            236 'scan_msg' => admin_priv('barcode_scan_msg'),
+            237 'video' => admin_priv('barcode_video_link'),
+            238 'source' => admin_priv('barcode_source_msg'),
+            239 'aftersales' => admin_priv('barcode_after_sale_index'),
+            240 'parent' => admin_priv('barcode_higher_level'),
+            241 'sales_area' => admin_priv('barcode_sale_area'),
+            242 'activity' => admin_priv('barcode_relation_activity'),
+            243 'company' => admin_priv('barcode_company_msg'),
+            244 'salesman' => admin_priv('set_salesman'),
+            248 'goods' => admin_priv('edit_barcode_relation_good'),
+            249 'made_date' => admin_priv('edit_barcode_product_date'),
+            250 'warranty_days' => admin_priv('edit_quality_guarantee_period'),
+            251 'warranty_deadline' => admin_priv('edit_quality_guarantee_period_date'),
+            252 'scan_msg' => admin_priv('edit_barcode_scan_msg'),
+            253 'video' => admin_priv('edit_barcode_video_link'),
+            254 'aftersales' => admin_priv('edit_barcode_after_sale_index'),
+            255 'source' => admin_priv('edit_barcode_source_msg'),
+            256 'parent' => admin_priv('edit_barcode_higher_level'),
+            257 'sales_area' => admin_priv('edit_barcode_sale_area'),
+            258 'activity' => admin_priv('edit_barcode_relation_activity'),
+            259 'company' => admin_priv('edit_barcode_company_msg'),
+            260 'salesman' => admin_priv('edit_salesman'),
+        barcode_order.php  (2 usages found)
+            55 if(!in_array($this->user_type,$user_types) || !admin_priv($priv_name)){
+            1332 if (!admin_priv('export_list')){
+        barcode_page.php  (1 usage found)
+            28 if (!admin_priv('scan_page_set')){
+        barcode_post_relate.php  (1 usage found)
+            24 if(!admin_priv('after_relation_set')) {
+        barcode_scan.php  (1 usage found)
+            24 if(!admin_priv('code_scan_list')) {
+        brand.php  (2 usages found)
+            134 if (!admin_priv('brand_manage')){
+            278 if (!admin_priv('brand_delete')){
+        category.php  (4 usages found)
+            31 if (!admin_priv('category_list')){
+            80 if (!admin_priv('category_list')){
+            222 if (! admin_priv ( 'category_edit' )) {
+            495 if (! admin_priv ( 'category_edit' )) {
+        complain.php  (3 usages found)
+            32 if (! admin_priv ( 'complain_list' )) {
+            61 if (! admin_priv ( 'complain_edit' )) {
+            150 if (!admin_priv('complain_edit')){
+        content.php  (3 usages found)
+            43 if (!admin_priv('public_notice_list')){
+            188 if (!admin_priv('public_notice_edit')){
+            235 if (!admin_priv('public_notice_edit')){
+        customer.php  (8 usages found)
+            39 if (!admin_priv('customer_list')) {
+            173 if (!admin_priv('customer_edit')) {
+            222 if (!admin_priv('customer_export')) {
+            351 if (!admin_priv('customer_edit')) {
+            414 if (!admin_priv('customer_edit')) {
+            500 if (!admin_priv('customer_edit')) {
+            534 if (!admin_priv('customer_edit')) {
+            592 if (!admin_priv('customer_tag_list')) {
+        customer_balance.php  (2 usages found)
+            32 if (!admin_priv('withdraw_cash_verify')){
+            95 if (! admin_priv ( 'withdraw_cash_verify_edit' )) {
+        customer_privilege.php  (3 usages found)
+            38 if (! admin_priv ( 'customer_privilege_list' )) {
+            132 if (!admin_priv('customer_privilege_edit')){
+            538 if (!admin_priv('customer_privilege_edit')){
+        customerline.php  (3 usages found)
+            29 if (!admin_priv('customer_edit')){
+            76 if (!admin_priv('customer_edit')){
+            113 if (!admin_priv('customer_edit')){
+        event.php  (6 usages found)
+            45 if (!admin_priv('luckywheel_add')){
+            70 if (!admin_priv('luckywheel_edit')){
+            91 if (!admin_priv('luckywheel_del')){
+            133 if (!admin_priv('luckywheel_top')){
+            161 if (!admin_priv('luckywheel_cached')){
+            267 if (!admin_priv('sigin_in_set')){
+        faq.php  (4 usages found)
+            39 if (!admin_priv('faq_list')){
+            80 if (!admin_priv('faq_edit')){
+            252 if (!admin_priv('faq_edit')){
+            279 if (!admin_priv('faq_list')){
+        filter.php  (2 usages found)
+            63 if (!admin_priv('cat_manage')){
+            189 if (!admin_priv('cat_delete')){
+        integral.php  (11 usages found)
+            32 if (!admin_priv('integral_product_edit')){
+            47 if (!admin_priv('integral_product_edit')){
+            75 if (!admin_priv('integral_product_list')){
+            99 if (!admin_priv('integral_product_edit')){
+            118 if (!admin_priv('integral_order_list')){
+            141 if (!admin_priv('integaral_order_edit')){
+            172 if (!admin_priv('integaral_order_edit')){
+            299 if (!admin_priv('integral_product_edit')){
+            418 if (!admin_priv('integral_product_edit')){
+            434 if (!admin_priv('integral_order_after_sale_list')){
+            455 if (!admin_priv('integral_order_after_sale_edit')){
+        log.php  (1 usage found)
+            36 if (!admin_priv('log_list')){
+        my_qrcode.php  (4 usages found)
+            124 if (!admin_priv('goodscode_list')){
+            239 if (!admin_priv('export_list')){
+            289 if (!(admin_priv('goodscode_edit') || admin_priv('barcode_chain_list'))){
+            1286 if (!admin_priv('qrcode_delete')){
+        order.php  (7 usages found)
+            32 if (! admin_priv ( 'order_list' )) {
+            92 if (!admin_priv('customer_edit')){
+            137 if (!admin_priv('order_edit')){
+            825 if (! admin_priv ( 'batch_send' )) {
+            1110 if (! admin_priv ( 'order_edit' )) {
+            1146 if (!admin_priv('order_edit')){
+            1184 if (! admin_priv ( 'order_list' )) {
+        order_aftersales.php  (3 usages found)
+            35 if (! admin_priv ( 'order_after_sales_list' )) {
+            93 if (!admin_priv('order_after_sales_edit')){
+            255 if (!admin_priv('order_after_sales_edit')){
+        package.php  (3 usages found)
+            25 if (!admin_priv('package_list')){
+            100 if (!admin_priv('package_edit')) {
+            473 if (!admin_priv('package_edit')) {
+        payment.php  (3 usages found)
+            46 if (! admin_priv ( 'payment_manage' )) {
+            186 if (! admin_priv ( 'payment_manage' )) {
+            209 if (! admin_priv ( 'payment_manage' )) {
+        product.php  (5 usages found)
+            39 if (! admin_priv ( 'product_list' )) {
+            151 if (! admin_priv ( 'product_edit' )) {
+            933 if (! admin_priv ( 'product_edit' )) {
+            1270 if (! admin_priv ( 'product_recycle' )) {
+            1301 if (! admin_priv ( 'product_recycle' )) {
+        ps_helper.php  (1 usage found)
+            609 function admin_priv($priv_str)
+        qrcode_scan.php  (2 usages found)
+            27 if (!admin_priv('code_scan_list')){
+            155 if (!admin_priv('code_scan_list')){
+        rebate.php  (1 usage found)
+            34 if (!admin_priv('rebate_set')){
+        rebate_threshold.php  (1 usage found)
+            28 if (!admin_priv('rebate_threshold_set')){
+        role.php  (3 usages found)
+            37 if (!admin_priv('role_list')){
+            82 if (!admin_priv('role_edit')){
+            240 if (!admin_priv('role_edit')){
+        sales_activity.php  (1 usage found)
+            30 if (!admin_priv('sales_activity')) {
+        section.php  (3 usages found)
+            14 if (! admin_priv ( 'section_list' )) {
+            58 if (! admin_priv ( 'section_edit' )) {
+            83 if (! admin_priv ( 'section_edit' )) {
+        share.php  (1 usage found)
+            34 if (!admin_priv('share_set')){
+        shipping.php  (4 usages found)
+            35 if (!admin_priv('shipping')){
+            69 if (!admin_priv('shipping_edit')){
+            105 if (!admin_priv('shipping_edit')){
+            169 if (!admin_priv('shipping_edit')){
+        shipping_area.php  (3 usages found)
+            35 if (!admin_priv('shipping_manage')){
+            98 if (!admin_priv('shipping_manage')){
+            323 if (!admin_priv('shipping_manage')){
+        shipping_fee.php  (2 usages found)
+            104 if (!admin_priv('shipping_fee_manage')){
+            244 if (!admin_priv('shipping_fee_delete')){
+        sign.php  (2 usages found)
+            85 if (!admin_priv('attr_manage')){
+            217 if (!admin_priv('attr_delete')){
+        template.php  (2 usages found)
+            98 if (!admin_priv('activity_add_page')){
+            389 if (!admin_priv('activity_edit')){
+        track_source.php  (3 usages found)
+            20 if(!admin_priv('origin_list_set')){
+            62 if(!admin_priv('origin_list_set')){
+            79 if(!admin_priv('origin_list_set')){
+        turnover.php  (1 usage found)
+            12 if (!admin_priv('turnover')){
+        wechat_account.php  (2 usages found)
+            61 if (! admin_priv ( 'wechat_account_manage' )) {
+            195 if (! admin_priv ( 'wechat_account_delete' )) {
+        wechat_material.php  (7 usages found)
+            23 if (! admin_priv ( 'wechat_material_manage' )) {
+            66 if (! admin_priv ( 'wechat_material_edit' )) {
+            84 if (! admin_priv ( 'wechat_material_edit' )) {
+            114 if (! admin_priv ( 'wechat_material_edit' )) {
+            131 if (! admin_priv ( 'wechat_material_edit' )) {
+            157 if (! admin_priv ( 'wechat_material_edit' )) {
+            763 if (! admin_priv ( 'wechat_material_edit' )) {
+        wechat_menu.php  (3 usages found)
+            111 if (! admin_priv ( 'wechat_menu_set' )) {
+            153 if (! admin_priv ( 'wechat_menu_set' )) {
+            359 if (! admin_priv ( 'wechat_menu_set' )) {
+        wechat_message.php  (3 usages found)
+            153 if (! admin_priv ( 'key_word_reply' )) {
+            327 if (! admin_priv ( 'default_msg_set' )) {
+            351 if (! admin_priv ( 'subscribe_msg_set' )) {
+        withdraw_cash.php  (1 usage found)
+            34 if (!admin_priv('withdraw_cash_set')){

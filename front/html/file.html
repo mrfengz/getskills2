@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <fieldset>
+    <legend>Profile</legend>
+    <div>
+        <label for="name">Display name:</label>
+        <input type="text" id="name" name="name"/>
+    </div>
+    <div>
+       <label for="image_uploads">Choose images to upload (PNG, JPG)</label>
+    <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" multiple>
+    </div>
+    <p class="priview">
+        <p>你还没有选择图片呢</p>
+    </div>
+</fieldset>
+</body>
+</html>
+
+
+<script>
+    // 支持 required accept multiple属性
+    // 支持change事件
+    // 
+    // multiple 选中多个文件时，value属性值为第一个选中的文件。js可以使用HtmlElement.files属性获取文件信息。一次性选中多张图片
+    // Element.files 每个file是一个FileList类型的Object，有以下属性
+    // name     lastModified    size    type
+    // Element.files.length 检测是否有文件被选中
+    // 
+    // accept
+    // 1.accept="image/png, image/jpeg" or accept=".png, .jpg, .jpeg"
+    // 2.accept="image/*" — Accept any file with an image/* MIME type. (Many mobile devices also let the user take a picture with the camera when this is used.)
+    // 3.accept=".doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" — accept anything that smells like an MS Word document.
+   var input = document.querySelector('input');
+   var preview = document.querySelector('p');
+
+   input.style.opacity=0; 
+   input.addEventListener('change', updateImageDisplay);
+
+    function updateImageDisplay(){
+        console.log('update');
+        while(preview.firstChild) {
+            preview.removeChild(preview.firstChild)
+        }
+
+        var curFiles = input.files;
+        if (curFiles.length == 0) {
+            var para = document.createElement('p');
+            para.textContent('还没有选择文件呢');
+            preview.appendChild(para);
+        } else {
+            var list = document.createElement('ol');
+            priview.appendChild(list);
+            for(var i=0; i < curFiles.length; i++){
+                var listItem = document.Element('li');
+                var para = document.createElement('p');
+                if (validFileType (curFiles[i])) {
+                    para.textContent = "文件名 "+curFiles[i].name + ', 文件大小 '+returnFileSize(curFiles[i].size); 
+                    var image = document.createElement('img');
+                    img.src=window.URL.createObjectURL(curFiles[i]);
+                    listItem.appendChild(image);
+                    listItem.appendChild(para);
+                } else {
+                    para.textContent = '文件'+curFiles[i].name+'非法';
+                    listItem.appendChild(para);
+                }
+                listItem.appendChild(listItem);
+            }
+        }
+    }
+
+    var fileTypes = [
+      'image/jpeg',
+      'image/pjpeg',
+      'image/png'
+    ]
+
+    function validFileType(file) {
+      for(var i = 0; i < fileTypes.length; i++) {
+        if(file.type === fileTypes[i]) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    function returnFileSize(number) {
+      if(number < 1024) {
+        return number + 'bytes';
+      } else if(number >= 1024 && number < 1048576) {
+        return (number/1024).toFixed(1) + 'KB';
+      } else if(number >= 1048576) {
+        return (number/1048576).toFixed(1) + 'MB';
+      }
+    }
+</script>
